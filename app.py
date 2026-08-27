@@ -230,7 +230,7 @@ if pagina == "Inicio":
     )
 
     notas = obtener_notas_supabase(
-        t.session_state.perfil["proyecto"]
+        st.session_state.perfil["proyecto"]
     )
 
     total_consultas = len(consultas)
