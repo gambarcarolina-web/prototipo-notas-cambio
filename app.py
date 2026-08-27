@@ -213,7 +213,6 @@ st.sidebar.caption(
     "de Notas de Cambio dentro de un entorno BIM."
 )
 
-
 # =========================================================
 # INICIO
 # =========================================================
@@ -224,10 +223,10 @@ if pagina == "Inicio":
     st.caption("Panel general del proyecto")
 
     consultas = obtener_consultas_supabase(
-    st.session_state.perfil["proyecto"]
-)
+        st.session_state.perfil["proyecto"]
+    )
 
-notas = obtener_notas()
+    notas = obtener_notas()
 
     total_consultas = len(consultas)
     total_nc = len(notas)
