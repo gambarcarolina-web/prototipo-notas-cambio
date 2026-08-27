@@ -384,7 +384,6 @@ elif pagina == "Nueva consulta":
                     ubicacion,
                     origen,
                     nombre_evidencia,
-                    fecha
                     st.session_state.usuario["id"]
                 )
 
