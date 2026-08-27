@@ -14,7 +14,10 @@ from database import (
     registrar_d02,
     obtener_historial
 )
-
+from supabase_database import (
+    crear_consulta_supabase,
+    obtener_consultas_supabase
+)
 
 # =========================================================
 # CONFIGURACIÓN GENERAL
@@ -220,8 +223,11 @@ if pagina == "Inicio":
     st.title("Gestión de Notas de Cambio")
     st.caption("Panel general del proyecto")
 
-    consultas = obtener_consultas()
-    notas = obtener_notas()
+    consultas = obtener_consultas_supabase(
+    st.session_state.perfil["proyecto"]
+)
+
+notas = obtener_notas()
 
     total_consultas = len(consultas)
     total_nc = len(notas)
@@ -371,7 +377,8 @@ elif pagina == "Nueva consulta":
                     "%d/%m/%Y %H:%M"
                 )
 
-                codigo = crear_consulta(
+                codigo = crear_consulta_supabase(
+                    st.session_state.perfil["proyecto"],
                     titulo,
                     descripcion,
                     disciplina,
@@ -379,6 +386,7 @@ elif pagina == "Nueva consulta":
                     origen,
                     nombre_evidencia,
                     fecha
+                    st.session_state.usuario["id"]
                 )
 
                 st.success(
@@ -401,7 +409,9 @@ elif pagina == "Consultas":
 
     st.divider()
 
-    consultas = obtener_consultas()
+    consultas = obtener_consultas_supabase(
+        st.session_state.perfil["proyecto"]
+    )
 
     if not consultas:
 
