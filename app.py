@@ -19,7 +19,11 @@ from supabase_database import (
     obtener_consultas_supabase,
     cerrar_consulta_supabase,
     crear_nc_desde_consulta_supabase,
-    obtener_notas_supabase
+    obtener_notas_supabase,
+    obtener_nota_supabase,
+    actualizar_pi01_supabase,
+    registrar_d02_supabase,
+    obtener_historial_supabase
 )
 
 # =========================================================
