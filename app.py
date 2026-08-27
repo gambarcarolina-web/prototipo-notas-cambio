@@ -1295,8 +1295,8 @@ elif pagina == "Notas de Cambio":
                             )
 
                             st.write(
-                                f"**Responsable:** "
-                                f"{evento['responsable'] or '—'}"
+                                f"**Ejecutado por:** "
+                                f"{evento.get('rol_ejecutor') or '—'}"
                             )
 
                             if evento["detalle"]:
