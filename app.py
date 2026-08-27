@@ -16,7 +16,10 @@ from database import (
 )
 from supabase_database import (
     crear_consulta_supabase,
-    obtener_consultas_supabase
+    obtener_consultas_supabase,
+    cerrar_consulta_supabase,
+    crear_nc_desde_consulta_supabase,
+    obtener_notas_supabase
 )
 
 # =========================================================
@@ -226,7 +229,9 @@ if pagina == "Inicio":
         st.session_state.perfil["proyecto"]
     )
 
-    notas = obtener_notas()
+    notas = obtener_notas_supabase(
+        t.session_state.perfil["proyecto"]
+    )
 
     total_consultas = len(consultas)
     total_nc = len(notas)
@@ -518,10 +523,11 @@ elif pagina == "Consultas":
                                     "%d/%m/%Y %H:%M"
                                 )
 
-                                codigo_nc = crear_nc_desde_consulta(
+                                codigo_nc = crear_nc_desde_consulta_supabase(
+                                    st.session_state.perfil["proyecto"],
                                     consulta["codigo"],
                                     tipo_nc,
-                                    fecha
+                                    st.session_state.usuario["id"]
                                 )
 
                                 st.success(
@@ -550,7 +556,8 @@ elif pagina == "Consultas":
 
                             else:
 
-                                cerrar_consulta(
+                                cerrar_consulta_supabase(
+                                    st.session_state.perfil["proyecto"],
                                     consulta["codigo"],
                                     respuesta
                                 )
@@ -602,7 +609,9 @@ elif pagina == "Notas de Cambio":
 
         st.divider()
 
-        notas = obtener_notas()
+        notas = obtener_notas_supabase(
+            st.session_state.perfil["proyecto"]
+        )
 
         if not notas:
 
