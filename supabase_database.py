@@ -1,3 +1,4 @@
+from datetime import datetime
 from supabase_client import obtener_supabase
 
 
@@ -210,4 +211,149 @@ def obtener_notas_supabase(proyecto):
     )
 
     return respuesta.data
-    
+    # =========================================================
+# OBTENER UNA NOTA DE CAMBIO
+# =========================================================
+
+def obtener_nota_supabase(proyecto, codigo):
+
+    supabase = obtener_supabase()
+
+    respuesta = (
+        supabase
+        .table("notas_cambio")
+        .select("*")
+        .eq("proyecto", proyecto)
+        .eq("codigo", codigo)
+        .single()
+        .execute()
+    )
+
+    return respuesta.data
+
+
+# =========================================================
+# ACTUALIZAR PI-01
+# =========================================================
+
+def actualizar_pi01_supabase(
+    proyecto,
+    codigo,
+    originador,
+    elemento_afectado,
+    evidencia_inicial,
+    referencia_fuente
+):
+
+    supabase = obtener_supabase()
+
+    (
+        supabase
+        .table("notas_cambio")
+        .update({
+            "originador": originador,
+            "elemento_afectado": elemento_afectado,
+            "evidencia_inicial": evidencia_inicial,
+            "referencia_fuente": referencia_fuente
+        })
+        .eq("proyecto", proyecto)
+        .eq("codigo", codigo)
+        .execute()
+    )
+
+
+# =========================================================
+# REGISTRAR D-02
+# =========================================================
+
+def registrar_d02_supabase(
+    proyecto,
+    codigo,
+    decision,
+    observacion,
+    responsable_tecnico,
+    usuario_id,
+    rol_usuario
+):
+
+    supabase = obtener_supabase()
+
+    nota = obtener_nota_supabase(
+        proyecto,
+        codigo
+    )
+
+    if not nota:
+        return False
+
+    estado_anterior = nota["estado"]
+
+    if decision == "Sí":
+
+        nuevo_estado = "En análisis técnico"
+        nuevo_responsable = responsable_tecnico
+
+    else:
+
+        nuevo_estado = "Registrada"
+        nuevo_responsable = "Originador"
+
+    (
+        supabase
+        .table("notas_cambio")
+        .update({
+            "decision_d02": decision,
+            "observacion_d02": observacion,
+            "fecha_d02": datetime.now().isoformat(),
+            "estado": nuevo_estado,
+            "responsable_actual": nuevo_responsable
+        })
+        .eq("proyecto", proyecto)
+        .eq("codigo", codigo)
+        .execute()
+    )
+
+    (
+        supabase
+        .table("historial")
+        .insert({
+            "codigo_nc": codigo,
+            "proyecto": proyecto,
+            "accion": "Decisión D-02",
+            "estado_anterior": estado_anterior,
+            "estado_nuevo": nuevo_estado,
+            "ejecutado_por": usuario_id,
+            "rol_ejecutor": rol_usuario,
+            "detalle": (
+                f"Información inicial suficiente: "
+                f"{decision}. {observacion}"
+            )
+        })
+        .execute()
+    )
+
+    return True
+
+
+# =========================================================
+# OBTENER HISTORIAL
+# =========================================================
+
+def obtener_historial_supabase(
+    proyecto,
+    codigo_nc
+):
+
+    supabase = obtener_supabase()
+
+    respuesta = (
+        supabase
+        .table("historial")
+        .select("*")
+        .eq("proyecto", proyecto)
+        .eq("codigo_nc", codigo_nc)
+        .order("id", desc=True)
+        .execute()
+    )
+
+    return respuesta.data

@@ -695,7 +695,10 @@ elif pagina == "Notas de Cambio":
 
         codigo_nc = st.session_state.nc_seleccionada
 
-        nc = obtener_nota(codigo_nc)
+        nc = obtener_nota_supabase(
+            st.session_state.perfil["proyecto"],
+            codigo_nc
+        )
 
         if nc is None:
 
@@ -938,7 +941,8 @@ elif pagina == "Notas de Cambio":
 
                         if guardar_pi01:
 
-                            actualizar_pi01(
+                            actualizar_pi01_supabase(
+                                st.session_state.perfil["proyecto"],
                                 nc["codigo"],
                                 originador,
                                 elemento_afectado,
@@ -1118,12 +1122,14 @@ elif pagina == "Notas de Cambio":
                                 "%d/%m/%Y %H:%M"
                             )
 
-                            registrar_d02(
+                            registrar_d02_supabase(
+                                st.session_state.perfil["proyecto"],
                                 nc["codigo"],
                                 decision_d02,
                                 observacion_d02,
                                 responsable_tecnico,
-                                fecha
+                                st.session_state.usuario["id"],
+                                st.session_state.perfil["rol"]
                             )
 
                             st.success(
@@ -1248,7 +1254,8 @@ elif pagina == "Notas de Cambio":
                     "Historial y trazabilidad"
                 )
 
-                historial = obtener_historial(
+                historial = obtener_historial_supabase(
+                    st.session_state.perfil["proyecto"],
                     nc["codigo"]
                 )
 
